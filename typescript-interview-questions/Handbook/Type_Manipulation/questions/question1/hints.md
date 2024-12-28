@@ -1,6 +1,6 @@
 # Solution 1:
 
-```
+```ts
 const identity<Type> = (arg: Type): Type => {
   return arg;
 };
@@ -12,7 +12,7 @@ The issue is with the syntax for declaring a generic function. The correct synta
 
 # Solution 2:
 
-```
+```ts
 const identity = <Type>(arg: Type): Type => {
   return arg;
 };
@@ -24,7 +24,7 @@ The issue is that the TypeScript compiler is interpreting the <Type> syntax as a
 
 # Correct Solution
 
-```
+```ts
 const identity = <Type extends unknown>(arg: Type): Type => {
   return arg;
 };

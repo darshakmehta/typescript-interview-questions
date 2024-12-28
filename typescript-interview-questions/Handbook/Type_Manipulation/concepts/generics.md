@@ -10,7 +10,7 @@ To start off, let’s do the “hello world” of generics: the identity functio
 
 Without generics, we would either have to give the identity function a specific type:
 
-```types
+```ts
 const identity = (arg: number): number => {
   return arg;
 };
@@ -18,7 +18,7 @@ const identity = (arg: number): number => {
 
 Or, we could describe the identity function using the `any` type:
 
-```types
+```ts
 const identity = (arg: any): any => {
   return arg;
 };
@@ -28,7 +28,7 @@ While using `any` is certainly generic in that it will cause the function to acc
 
 Instead, we need a way of capturing the type of the argument in such a way that we can also use it to denote what is being returned. Here, we will use a type variable, a special kind of variable that works on types rather than values.
 
-```types
+```ts
 const identity = <Type extends unknown>(arg: Type): Type => {
   return arg;
 };
@@ -40,7 +40,7 @@ We say that this version of the identity function is generic, as it works over a
 
 Once we’ve written the generic identity function, we can call it in one of two ways. The first way is to pass all of the arguments, including the type argument, to the function:
 
-```types
+```ts
 const output = identity<string>('myString');
 ```
 
@@ -48,7 +48,7 @@ Here we explicitly set `Type` to be `string` as one of the arguments to the func
 
 The second way is also perhaps the most common. Here we use type argument inference — that is, we want the compiler to set the value of `Type` for us automatically based on the type of the argument we pass in:
 
-```types
+```ts
 const output = identity('myString');
 ```
 
@@ -60,7 +60,7 @@ When you begin to use generics, you’ll notice that when you create generic fun
 
 Let’s take our `identity` function from earlier:
 
-```types
+```ts
 const identity = <Type extends unknown>(arg: Type): Type => {
   return arg;
 };
@@ -68,7 +68,7 @@ const identity = <Type extends unknown>(arg: Type): Type => {
 
 What if we want to also log the length of the argument arg to the console with each call? We might be tempted to write this:
 
-```types
+```ts
 const loggingIdentity = <Type extends unknown>(arg: Type): Type => {
   console.log(arg.length); // Property 'length' does not exist on type 'Type'.
   return arg;
@@ -79,7 +79,7 @@ When we do, the compiler will give us an error that we’re using the `.length` 
 
 Let’s say that we’ve actually intended this function to work on arrays of Type rather than Type directly. Since we’re working with arrays, the `.length` member should be available. We can describe this just like we would create arrays of other types:
 
-```types
+```ts
 const loggingIdentity = <Type extends unknown>(arg: Type[]): Type[] => {
   console.log(arg.length);
   return arg;
@@ -90,7 +90,7 @@ You can read the type of `loggingIdentity` as “the generic function `loggingId
 
 We can alternatively write the sample example this way:
 
-```types
+```ts
 const loggingIdentity = <Type extends unknown>(
   arg: Array<Type>
 ): Array<Type> => {
@@ -107,7 +107,7 @@ In previous sections, we created generic identity functions that worked over a r
 
 The type of generic functions is just like those of non-generic functions, with the type parameters listed first, similarly to function declarations:
 
-```types
+```ts
 const identity = <Type extends unknown>(arg: Type): Type => {
   return arg;
 };
@@ -117,7 +117,7 @@ let myIdentity: <Type>(arg: Type) => Type = identity; // inference that myIdenti
 
 We could also have used a different name for the generic type parameter in the type, so long as the number of type variables and how the type variables are used line up.
 
-```types
+```ts
 const identity = <Type extends unknown>(arg: Type): Type => {
   return arg;
 };
@@ -127,7 +127,7 @@ let myIdentity: <Input>(arg: Input) => Input = identity;
 
 We can also write the generic type as a call signature of an `object literal` type:
 
-```types
+```ts
 const identity = <Type extends unknown>(arg: Type): Type => {
   return arg;
 };
@@ -137,7 +137,7 @@ let myIdentity: { <Type>(arg: Type): Type } = identity;
 
 Which leads us to writing our first generic interface. Let’s take the object literal from the previous example and move it to an interface:
 
-```types
+```ts
 interface GenericIdentityFn {
   <Type>(arg: Type): Type;
 }
@@ -154,7 +154,7 @@ myIdentity<number>(42); // Type is resolved as number
 
 In a similar example, we may want to move the generic parameter to be a parameter of the whole interface. This lets us see what type(s) we’re generic over (e.g. `Dictionary<string>` rather than just `Dictionary`). This makes the type parameter visible to all the other members of the interface.
 
-```types
+```ts
 interface GenericIdentityFn<Type> {
   (arg: Type): Type;
 }
@@ -192,7 +192,7 @@ Second Example: Useful when the type parameter is consistent across the interfac
 
 A generic class has a similar shape to a generic interface. Generic classes have a generic type parameter list in angle brackets (`<>`) following the name of the class.
 
-```types
+```ts
 class GenericNumber<NumType> {
   zeroValue: NumType;
   add: (x: NumType, y: NumType) => NumType;
@@ -207,7 +207,7 @@ myGenericNumber.add = (x, y) => {
 
 This is a pretty literal use of the `GenericNumber` class, but you may have noticed that nothing is restricting it to only use the `number` type. We could have instead used `string` or even more complex objects.
 
-```types
+```ts
 let stringNumeric = new GenericNumber<string>();
 stringNumeric.zeroValue = '';
 stringNumeric.add = (x, y) => {
@@ -225,7 +225,7 @@ As we cover in our section on classes, **a class has two sides to its type: the 
 
 If you remember from an earlier example, you may sometimes want to write a generic function that works on a set of types where you have some knowledge about what capabilities that set of types will have. In our `loggingIdentity` example, we wanted to be able to access the `.length` property of `arg`, but the compiler could not prove that every type had a `.length` property, so it warns us that we can’t make this assumption.
 
-```types
+```ts
 const loggingIdentity = <Type extends unknown>(arg: Type): Type => {
   console.log(arg.length); // Property 'length' does not exist on type 'Type'.
   return arg;
@@ -236,7 +236,7 @@ Instead of working with any and all types, we’d like to constrain this functio
 
 To do so, we’ll create an interface that describes our constraint. Here, we’ll create an interface that has a single `.length` property and then we’ll use this interface and the `extends` keyword to denote our constraint:
 
-```types
+```ts
 interface Lengthwise {
   length: number;
 }
@@ -249,20 +249,20 @@ const loggingIdentity = <type extends Lengthwise>(arg: Type): Type => {
 
 Because the generic function is now constrained, it will no longer work over any and all types:
 
-```types
+```ts
 loggingIdentity(3);
 // Argument of type 'number' is not assignable to parameter of type 'Lengthwise'.
 ```
 
 Instead, we need to pass in values whose type has all the required properties:
 
-```types
+```ts
 loggingIdentity({ length: 10, value: 3 });
 ```
 
 eg:
 
-```types
+```ts
 interface Lengthwise {
   length: number;
 }
@@ -280,7 +280,7 @@ loggingIdentity({ length: 10, value: 3 });
 
 You can declare a type parameter that is constrained by another type parameter. For example, here we’d like to get a property from an object given its name. We’d like to ensure that we’re not accidentally grabbing a property that does not exist on the `obj`, so we’ll place a constraint between the two types:
 
-```types
+```ts
 const getProperty = <Type, Key extends keyof Type>(obj: Type, key: Key) => {
   return obj[key];
 };
@@ -296,7 +296,7 @@ getProperty(x, 'm');
 
 When creating factories in TypeScript using generics, it is necessary to refer to class types by their constructor functions. For example,
 
-```types
+```ts
 const create = <Type extends unknown>(c: { new (): Type }): Type => {
   return new c();
 };
@@ -304,7 +304,7 @@ const create = <Type extends unknown>(c: { new (): Type }): Type => {
 
 A more advanced example uses the prototype property to infer and constrain relationships between the constructor function and the instance side of class types.
 
-```types
+```ts
 class BeeKeeper {
   hasMask: boolean = true;
 }
@@ -340,7 +340,7 @@ This pattern is used to power the [mixins](https://www.typescriptlang.org/docs/h
 
 By declaring a default for a generic type parameter, you make it optional to specify the corresponding type argument. For example, a function which creates a new `HTMLElement`. Calling the function with no arguments generates a `HTMLDivElement`; calling the function with an element as the first argument generates an element of the argument’s type. You can optionally pass a list of children as well. Previously you would have to define the function as:
 
-```types
+```ts
 declare function create(): Container<HTMLDivElement, HTMLDivElement[]>;
 declare function create<T extends HTMLElement>(element: T): Container<T, T[]>;
 declare function create<T extends HTMLElement, U extends HTMLElement>(
@@ -351,7 +351,7 @@ declare function create<T extends HTMLElement, U extends HTMLElement>(
 
 With generic parameter defaults we can reduce it to:
 
-```types
+```ts
 declare function create<
   T extends HTMLElement = HTMLDivElement,
   U extends HTMLElement[] = T[]
@@ -380,7 +380,7 @@ A generic parameter default follows the following rules:
 
 For example, if you have an interface representing an object that can `make` a certain type:
 
-```types
+```ts
 interface Producer<T> {
   make(): T;
 }
@@ -390,7 +390,7 @@ We can use a `Producer<Cat>` where a `Producer<Animal>` is expected, because a `
 
 Conversely, if you have an interface that can `consume` a certain type:
 
-```types
+```ts
 interface Consumer<T> {
   consume: (arg: T) => void;
 }

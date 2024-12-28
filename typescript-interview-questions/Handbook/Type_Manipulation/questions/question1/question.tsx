@@ -13,7 +13,5 @@ function identity<Type>(arg: Type): Type {
 // 5. What is the type of the generic return value? // Answer: Type
 // 6. What is the type of the generic function itself? // Answer: <Type>(arg: Type) => Type
 // 7. What is the type of the generic argument and return value? // Answer: Type
-// 8. What is the type of the generic function itself?  // Answer: <Type>(arg: Type) => Type
-// 9. What is the type of the generic argument and return value? // Answer: Type
-// 10. Ways to call identity function? // Answer: identity<Type>(arg) i.e const result = identity<string>("Hello World");
-// 11. Argument inference in identity function? // Answer: const result = identity("Hello World");
+// 8. Ways to call identity function? // Answer: identity<Type>(arg) i.e const result = identity<string>("Hello World");
+// 9. Argument inference in identity function? // Answer: const result = identity("Hello World");
