@@ -15,3 +15,11 @@ function identity<Type>(arg: Type): Type {
 // 7. What is the type of the generic argument and return value? // Answer: Type
 // 8. Ways to call identity function? // Answer: identity<Type>(arg) i.e const result = identity<string>("Hello World");
 // 9. Argument inference in identity function? // Answer: const result = identity("Hello World");
+
+// Solution:
+
+const identity = <Type extends unknown>(arg: Type): Type => {
+  return arg;
+};
+
+export default identity;
