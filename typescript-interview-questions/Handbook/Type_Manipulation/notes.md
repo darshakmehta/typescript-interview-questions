@@ -7,3 +7,5 @@ A class has two sides to its type: the static side and the instance side. Generi
 JavaScript object keys are always coerced to a string, so obj[0] is always the same as obj["0"].
 
 The infer keyword in TypeScript is used within conditional types to infer a type variable from a given type
+
+In the context of TypeScript template literal types, the order of the intersection (&) does not matter
