@@ -262,15 +262,12 @@ Note:
 _Why Can't React Use # Private Fields?_
 
 React's State Management:
-
 React manages component state (this.state) and lifecycle methods (componentDidMount, etc.) by directly interacting with the class instance.
-
-# private fields are inaccessible outside the class definition, which makes them unsuitable for situations where React might need access.
+Private fields are inaccessible outside the class definition, which makes them unsuitable for situations where React might need access.
 
 _Why Avoid # Private Fields in React?_
 
 They conflict with React's core philosophy of open access to methods and state.
-
 Modern React with functional components and hooks makes class-based patterns (and # private fields) less necessary.
 
 ## Functional Component Solution with Hooks
@@ -342,10 +339,7 @@ export default CatComponent;
 
 _Benefits of Functional Components and Hooks_
 
-Cleaner Code: No need for constructors, this, or manual method bindings.
-
-State Coherence: State updates are isolated and predictable via hooks.
-
-Modern Practices: Functional components are the recommended approach in React as of recent versions.
-
-Improved Readability: Logic and state management are easier to understand and modify.
+- Cleaner Code: No need for constructors, this, or manual method bindings.
+- State Coherence: State updates are isolated and predictable via hooks.
+- Modern Practices: Functional components are the recommended approach in React as of recent versions.
+- Improved Readability: Logic and state management are easier to understand and modify.
