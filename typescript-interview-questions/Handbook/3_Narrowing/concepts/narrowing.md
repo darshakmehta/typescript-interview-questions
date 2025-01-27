@@ -357,6 +357,122 @@ In addition, classes can use this `is Type` to narrow their type.
 
 Types can also be narrowed using Assertion functions.
 
+There’s a specific set of functions that throw an error if something unexpected happened. They’re called “assertion” functions. As an example, Node.js has a dedicated function for this called assert.
+
+```ts
+assert(someValue === 42);
+```
+
+In this example if someValue isn’t equal to 42, then assert will throw an AssertionError.
+
+Assertions in JavaScript are often used to guard against improper types being passed in. For example,
+
+```ts
+function multiply(x, y) {
+  assert(typeof x === 'number');
+  assert(typeof y === 'number');
+  return x * y;
+}
+```
+
+Unfortunately in TypeScript these checks could never be properly encoded. For loosely-typed code this meant TypeScript was checking less, and for slightly conservative code it often forced users to use type assertions.
+
+```ts
+function yell(str) {
+  assert(typeof str === 'string');
+  return str.toUppercase();
+  // Oops! We misspelled 'toUpperCase'.
+  // Would be great if TypeScript still caught this!
+}
+```
+
+The alternative was to instead rewrite the code so that the language could analyze it, but this isn’t convenient.
+
+```ts
+function yell(str) {
+  if (typeof str !== 'string') {
+    throw new TypeError('str should have been a string.');
+  }
+  // Error caught!
+  return str.toUppercase();
+}
+```
+
+Ultimately the goal of TypeScript is to type existing JavaScript constructs in the least disruptive way. For that reason, TypeScript 3.7 introduces a new concept called “assertion signatures” which model these assertion functions.
+
+The first type of assertion signature models the way that Node’s assert function works. It ensures that whatever condition is being checked must be true for the remainder of the containing scope.
+
+```ts
+function assert(condition: any, msg?: string): asserts condition {
+  if (!condition) {
+    throw new AssertionError(msg);
+  }
+}
+```
+
+`asserts condition` says that whatever gets passed into the condition parameter must be true if the assert returns (because otherwise it would throw an error). That means that for the rest of the scope, that condition must be truthy. As an example, using this assertion function means we do catch our original yell example.
+
+```ts
+function yell(str) {
+  assert(typeof str === 'string');
+  return str.toUppercase();
+  // ~~~~~~~~~~~
+  // error: Property 'toUppercase' does not exist on type 'string'.
+  // Did you mean 'toUpperCase'?
+}
+```
+
+The other type of assertion signature doesn’t check for a condition, but instead tells TypeScript that a specific variable or property has a different type.
+
+```ts
+function assertIsString(val: any): asserts val is string {
+  if (typeof val !== 'string') {
+    throw new AssertionError('Not a string!');
+  }
+}
+```
+
+Here `asserts val is string` ensures that after any call to `assertIsString`, any variable passed in will be known to be a string.
+
+```ts
+function yell(str: any) {
+  assertIsString(str);
+  // Now TypeScript knows that 'str' is a 'string'.
+  return str.toUppercase();
+  // ~~~~~~~~~~~
+  // error: Property 'toUppercase' does not exist on type 'string'.
+  // Did you mean 'toUpperCase'?
+}
+```
+
+These assertion signatures are very similar to writing type predicate signatures:
+
+```ts
+function isString(val: any): val is string {
+  return typeof val === 'string';
+}
+function yell(str: any) {
+  if (isString(str)) {
+    return str.toUppercase();
+  }
+  throw 'Oops!';
+}
+```
+
+And just like type predicate signatures, these assertion signatures are incredibly expressive. We can express some fairly sophisticated ideas with these.
+
+```ts
+function assertIsDefined<T>(val: T): asserts val is NonNullable<T> {
+  if (val === undefined || val === null) {
+    throw new AssertionError(
+      `Expected 'val' to be defined, but received ${val}`
+    );
+  }
+}
+```
+
+To read up more about assertion signatures, check out the original pull request.
+
 ## Discriminated Unions
 
 Most of the examples we’ve looked at so far have focused around narrowing single variables with simple types like `string`, `boolean`, and `number`. While this is common, most of the time in JavaScript we’ll be dealing with slightly more complex structures.
